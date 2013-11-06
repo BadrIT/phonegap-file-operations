@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.badrit.FileOperations"
+    version="0.1.0">
+    <name>FileOperations</name>
+    <description>Cordova FileOperations Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,FileOperations</keywords>
+
+
+    <js-module src="www/FileOperations.js" name="FileOperations">
+        <clobbers target="navigator.FileOperations" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="FileOperations">
+                <param name="android-package" value="com.badrit.FileOperations.FileOperationsPlugin"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/FileOperationsPlugin.java" target-dir="src/com/badrit/FileOperations/" />
+
+    </platform>
+
+</plugin>
