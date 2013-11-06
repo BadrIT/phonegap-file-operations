@@ -32,10 +32,9 @@ public class FileOperationsPlugin extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args,
 			CallbackContext callbackContext) throws JSONException {
+		JSONObject parameters = args.getJSONObject(0);
 		if ("copy".equals(action)) {
-
 			try {
-				JSONObject parameters = args.getJSONObject(0);
 				if (parameters != null) {
 					Boolean result = copy(parameters
 							.getString("from"), parameters
@@ -48,26 +47,26 @@ public class FileOperationsPlugin extends CordovaPlugin {
 
 			return true;
 		}
+		else if ("delete".equals(action)) {
+			if (parameters != null) {
+				Boolean result = delete(parameters
+						.getString("path"));
+				callbackContext.success(result + "");
+			}
+		}
 		return false;
 	}
-
+	
+	public Boolean delete(String path){
+		File file = getFile(path);
+		file.delete();
+		return true;
+	}
+	
 	public Boolean copy(String from, String to) {
 		try {
-			File src;
-			// Handle the special case where you get an Android content:// uri.
-			if(from.contains("content://")){
-				Cursor cursor = this.cordova.getActivity().managedQuery(Uri.parse(from), new String[] { MediaStore.Images.Media.DATA }, null, null, null);
-	            // Note: MediaStore.Images/Audio/Video.Media.DATA is always "_data"
-	            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-	            cursor.moveToFirst();
-	            src = new File(cursor.getString(column_index));
-			}else{
-				Uri fromUri = Uri.parse(from);
-				src = new File(fromUri.getEncodedPath());
-			}
-			
-			Uri toUri = Uri.parse(to);
-			File dst = new File(toUri.getEncodedPath());
+			File src = getFile(from);
+			File dst = getFile(to);
 			
 			InputStream in = new FileInputStream(src);
 			OutputStream out = new FileOutputStream(dst);
@@ -86,8 +85,20 @@ public class FileOperationsPlugin extends CordovaPlugin {
 		return true;
 	}
 	
-	private String formatPath(String path){
-		return path.replace("content:/", "").replace("file://", "");
+	private File getFile(String path){
+		File file;
+		// Handle the special case where you get an Android content:// uri.
+		if(path.contains("content://")){
+			Cursor cursor = this.cordova.getActivity().managedQuery(Uri.parse(path), new String[] { MediaStore.Images.Media.DATA }, null, null, null);
+            // Note: MediaStore.Images/Audio/Video.Media.DATA is always "_data"
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            file = new File(cursor.getString(column_index));
+		}else{
+			Uri fromUri = Uri.parse(path);
+			file = new File(fromUri.getEncodedPath());
+		}
+		return file;
 	}
 
 }

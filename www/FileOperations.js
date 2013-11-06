@@ -1,9 +1,9 @@
-// window.plugins.FileOperations
+cordova.define("com.badrit.FileOperations.FileOperations", function(require, exports, module) {// window.plugins.FileOperations
 
 function FileOperations() {
 }
 
-FileOperations.prototype.copy = function(from, to, success, failure) {
+FileOperations.prototype.copyFile = function(from, to, success, failure) {
 	var args = {};
 	args.from = from;
 	args.to = to;
@@ -19,6 +19,34 @@ FileOperations.prototype.copy = function(from, to, success, failure) {
 	}
 }
 
+FileOperations.prototype.deleteFile = function(path, success, failure) {
+	var args = {};
+	args.path = path;
+	if (device.platform == "Android")
+		cordova.exec(success, failure, "FileOperations", "delete", [args]);
+	else{
+		var onRequestFileSystemSuccess = function (fileSystem) { 
+			path, null, 
+ 			function(file){
+ 				file.remove(function(){
+ 					console.log("remove "+fileName);
+ 					success(true);
+ 				}, 
+ 				function(error){
+ 					alert(error.code);
+ 					success(false);
+ 				})
+ 			},
+ 			function(error){
+ 				alert(error.code);
+ 				console.log("Error creating directory "+error.code);
+ 			});
+		} 
+		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onRequestFileSystemSuccess, null); 
+		
+	}
+}
+
 cordova.addConstructor(function()  {
 	if(!window.plugins)
 	{
@@ -31,4 +59,4 @@ cordova.addConstructor(function()  {
    };
    
    window.plugins.FileOperations = new FileOperations();
-});
+});});
