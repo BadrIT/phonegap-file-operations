@@ -1,5 +1,8 @@
 // window.plugins.FileOperations
 
+function FileOperations() {
+}
+
 FileOperations.prototype.copy = function(from, to, success, failure) {
 	var args = {};
 	args.from = from;
