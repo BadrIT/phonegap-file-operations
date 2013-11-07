@@ -11,9 +11,10 @@ FileOperations.prototype.copyFile = function(from, to, success, failure) {
 	else{
 		var fileTransfer = new FileTransfer();
  		fileTransfer.download(args.from, args.to, function (entry) {
- 			callback(filePath);
+ 			success(args.to);
  		}, function (error) {
  			alert("Failed to save photo. Error code: " + error.code);
+            failure(error.code);
  		});
 	}
 }
@@ -26,20 +27,21 @@ FileOperations.prototype.deleteFile = function(path, success, failure) {
 	else{
 
 		var onRequestFileSystemSuccess = function (fileSystem) { 
-			fileSystem.root.getFile(path,
+			fileSystem.root.getFile(args.path,
  			function(file){
  				file.remove(function(){
- 					console.log("remove "+fileName);
+ 					console.log("remove: " + args.path);
  					success(true);
  				}, 
  				function(error){
  					alert(error.code);
- 					success(false);
+ 					failure(error.code);
  				});
  			},
  			function(error){
  				alert(error.code);
  				console.log("Error creating directory " + error.code);
+                failure(error.code);
  			});
 		} 
 		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onRequestFileSystemSuccess, null); 
