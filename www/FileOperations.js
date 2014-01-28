@@ -60,6 +60,7 @@ cordova.addConstructor(function()  {
    	window.Cordova = cordova;
    };
    
+   if (device.platform == "Android")
    window.plugins.FileOperations = new FileOperations();
 });
 
