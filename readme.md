@@ -1,8 +1,9 @@
 FileOperations plugin for Cordova / PhoneGap
 ======================================================
 
-This Plugin is used to copy, move and delete files in android.
-Why not FileTransfer? because file transfer is not implemented to handle large size of files,
+This plugin is used to copy, move and delete files in android, but why not FileTransfer?
+
+because file transfer is not implemented to handle large size of files,
 so if you need to use FileTransfer.download to handle copy elements, your app may crash, so we have to do it nativly
 
 ## Usage
