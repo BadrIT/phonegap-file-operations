@@ -9,8 +9,19 @@ so if you need to use FileTransfer.download to handle copy elements, your app ma
 
 Example Usage: 
 
-```js
+1. **Copy file**
 
+```js
+var from = "/mnt/sdcard/Android/data/com.example.hello/cache/1390911.jpg";
+var to = "/mnt/sdcard/test/files/1390911.jpg";
+window.plugins.FileOperations.copyFile(from, to, function(){console.log('success')}, function(){console.log('fail')});
+```
+2. **Delete file**
+
+```js
+var path = "/mnt/sdcard/test/files/1390911.jpg";
+window.plugins.FileOperations.deleteFile(path, function(){console.log('success')}, function(){console.log('fail')});
+});
 ```
 
 This has been successfully tested on Cordova 3.0 to 3.1.
