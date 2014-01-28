@@ -10,6 +10,7 @@
     <keywords>cordova,FileOperations</keywords>
     <dependency id="org.apache.cordova.device" url="https://github.com/apache/cordova-plugin-device.git" />
     <dependency id="org.apache.cordova.file" url="https://github.com/apache/cordova-plugin-file.git" />
+    <dependency id="org.apache.cordova.file-transfer" url="https://github.com/apache/cordova-plugin-file-transfer.git" />
 
     <js-module src="www/FileOperations.js" name="FileOperations">
         <clobbers target="navigator.FileOperations" />
