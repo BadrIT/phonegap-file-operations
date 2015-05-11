@@ -11,7 +11,12 @@ FileOperations.prototype.copyFile = function(from, to, success, failure) {
 	else{
 		var fileTransfer = new FileTransfer();
  		fileTransfer.download(args.from, args.to, function (entry) {
- 			success(args.to);
+			//'{"from":"content://media/external/images/media/24","to":"/storage/emulated/0//.wapp/files//24","status":"true"}'
+ 			success({
+				"from": args.from,
+				"to": args.to,
+				"status": "true"
+			});
  		}, function (error) {
  			alert("Failed to save photo. Error code: " + error.code);
             failure(error.code);
