@@ -10,34 +10,29 @@
 
 package com.badrit.FileOperations;
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.net.Uri;
-import android.os.Environment;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
 
 public class FileOperationsPlugin extends CordovaPlugin {
-
-    private Context context;
 
     @Override
     public boolean execute(String action, JSONArray args,
                            CallbackContext callbackContext) throws JSONException {
-        this.context = cordova.getActivity().getApplicationContext();
-
         JSONObject parameters = args.getJSONObject(0);
         if ("copy".equals(action)) {
             try {
@@ -106,50 +101,15 @@ public class FileOperationsPlugin extends CordovaPlugin {
         File file;
         // Handle the special case where you get an Android content:// uri.
         if (path.contains("content://")) {
-            Uri mediaUri = Uri.parse(path);
-            file = new File(getMediaFile(mediaUri));
+            Cursor cursor = this.cordova.getActivity().managedQuery(Uri.parse(path), new String[]{MediaStore.Images.Media.DATA}, null, null, null);
+            // Note: MediaStore.Images/Audio/Video.Media.DATA is always "_data"
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            file = new File(cursor.getString(column_index));
         } else {
             file = new File(path);
         }
         return file;
-    }
-
-    private String getMediaFile(Uri thumbUri) {
-        AssetFileDescriptor afd = null;
-        FileOutputStream outputStream = null;
-        InputStream inputStream = null;
-        try {
-            afd = context.getContentResolver().
-                    openAssetFileDescriptor(thumbUri, "r");
-
-            FileDescriptor fdd = afd.getFileDescriptor();
-
-            inputStream = new FileInputStream(fdd);
-            File file = File.createTempFile("media", ".tmp");
-            file.deleteOnExit();
-            outputStream = new FileOutputStream(file);
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, len);
-            }
-            inputStream.close();
-            outputStream.close();
-
-            return "file://" + file.getAbsolutePath();
-        } catch (Exception e) {
-        } finally {
-            try {
-                if (afd != null)
-                    afd.close();
-                if (inputStream != null)
-                    inputStream.close();
-                if (outputStream != null)
-                    outputStream.close();
-            } catch (IOException e) {
-            }
-        }
-        return "";
     }
 
 }
