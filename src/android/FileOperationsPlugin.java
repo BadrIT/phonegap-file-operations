@@ -107,7 +107,8 @@ public class FileOperationsPlugin extends CordovaPlugin {
             cursor.moveToFirst();
             file = new File(cursor.getString(column_index));
         } else {
-            file = new File(path);
+            Uri fromUri = Uri.parse(path);
+            file = new File(fromUri.getEncodedPath());
         }
         return file;
     }
